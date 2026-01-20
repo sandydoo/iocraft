@@ -279,7 +279,9 @@ impl<W: Write + Send> StdTerminal<W> {
     fn set_raw_mode_enabled(&mut self, raw_mode_enabled: bool) -> io::Result<()> {
         if raw_mode_enabled != self.raw_mode_enabled {
             if raw_mode_enabled {
-                if terminal::supports_keyboard_enhancement().unwrap_or(false) {
+                if stdout().is_terminal()
+                    && terminal::supports_keyboard_enhancement().unwrap_or(false)
+                {
                     execute!(
                         self.dest,
                         event::PushKeyboardEnhancementFlags(
